@@ -1,2 +1,2 @@
-#Execute
-python changer.py <<Name>>
+## Execute
+python changer.py ''Name''

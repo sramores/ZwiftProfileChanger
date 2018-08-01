@@ -2,9 +2,9 @@
 	"email": "email@email.com",
 	"password":"password",
     "profiles": {
-        "Name1":
+        "John":
             {"firstName":"John", "lastName":"Doe", "flag": "Spain", "gender": "Male", "height": 169, "weight": 65, "user": "email@email.com", "password": "XXX"},
-        "Name2":
+        "Jane":
             {"firstName":"Jane", "lastName":"Doe", "flag": "Argentina", "gender": "Female", "height": 167, "weight": 52, "user": "email@email.com", "password": "XXX"}
     }
 }
