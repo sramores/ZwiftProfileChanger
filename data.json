@@ -1,10 +1,61 @@
 {
-	"email": "email@email.com",
-	"password":"password",
-    "profiles": {
+"email": "email@email.com",
+"password":"password",
+    "profiles": 
+    {
         "John":
-            {"firstName":"John", "lastName":"Doe", "flag": "Spain", "gender": "Male", "height": 169, "weight": 65, "user": "email@email.com", "password": "XXX"},
+        {
+            "firstName":"John", 
+            "lastName":"Doe", 
+            "flag": "Spain", 
+            "gender": "Male", 
+            "height": 169, 
+            "weight": 65,
+            "connections": 
+            {
+                "Garmin":
+                {
+                    "user": "email@email.com", 
+                    "password": "XXX"
+                },
+                "Strava":
+                {
+                    "user": "email@email.com", 
+                    "password": "XXX"
+                },
+                "TrainingPeaks":
+                {
+                    "user": "email@email.com", 
+                    "password": "XXX"
+                },
+                "TodaysPlan":
+                {
+                    "user": "email@email.com", 
+                    "password": "XXX"
+                }
+            }
+        },
         "Jane":
-            {"firstName":"Jane", "lastName":"Doe", "flag": "Argentina", "gender": "Female", "height": 167, "weight": 52, "user": "email@email.com", "password": "XXX"}
+        {
+            "firstName":"Jane", 
+            "lastName":"Doe",
+            "flag": "Argentina", 
+            "gender": "Female", 
+            "height": 167,
+            "weight": 52,
+            "connections": 
+            {
+                "Garmin":
+                {
+                    "user": "email@email.com", 
+                    "password": "XXX"
+                },
+                "Strava":
+                {
+                    "user": "email@email.com", 
+                    "password": "XXX"
+                }
+            }
+        }
     }
 }
