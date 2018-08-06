@@ -15,3 +15,4 @@
 /doc/doctrees/
 /venv/
 .vscode*
+data*.json
