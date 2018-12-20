@@ -10,16 +10,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import json
 import sys
+import ast
 
 
 def setup():
-    driver_location = "/opt/selenium/chromedriver"
-    options = Options()
-    options.add_argument("--start-maximized")
-    # options.add_argument('--headless')
-    # options.add_argument('--disable-gpu')
 
-    return webdriver.Chrome(driver_location, options=options)
+    driver_location = 'D:/webdriver/chromedriver.exe'
+
+    options = webdriver.ChromeOptions()
+    options.add_argument("--start-maximized")
+    
+    return webdriver.Chrome(executable_path=driver_location, chrome_options=options)
 
 
 def load_json():
@@ -33,7 +34,7 @@ def main():
 
     login(data['email'], data['password'])
     change_profile(data['profiles'][profile])
-    connection(data['profiles'][profile]['user'], data['profiles'][profile]['password'])
+    connection(data['profiles'][profile]['connections'])
     close()
 
 
@@ -50,6 +51,9 @@ def login(email, password):
     psw.clear()
     psw.send_keys(password)
     psw.send_keys(Keys.RETURN)
+
+    #assert()
+    # TODO Assert Login
 
 
 def change_profile(profile):
@@ -82,48 +86,73 @@ def change_profile(profile):
     driver.find_element_by_xpath("/html/body/my-zwift/profile-component/div/div/div[2]/settings-general-component/div[2]/form/div[7]/div/button").click()
 
 
-def garmin_connect(usr, psw):
-    print("Garmin Connect.")
-
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "garmin-connection-button")))
-
-    garmin_connection_button = driver.find_element_by_id("garmin-connection-button")
-    ActionChains(driver).move_to_element(garmin_connection_button).click(garmin_connection_button).perform()
-
-    driver.switch_to.default_content()
-    driver.switch_to.frame("gauth-widget-frame-gauth-component")
-
-    username = driver.find_element_by_id("username")
-    username.clear()
-    username.send_keys(usr)
-
-    password = driver.find_element_by_id("password")
-    password.clear()
-    password.send_keys(psw)
-    password.send_keys(Keys.RETURN)
-
-    driver.switch_to.default_content()
-
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "authorize-group")))
-    auth_button = driver.find_element_by_id("auth-app-gdpr")
-    ActionChains(driver).move_to_element(auth_button).perform()
-    auth_button.click()
-
-
-def connection(user, password):
+def connection(connections):
     print("Connection page.")
 
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "settings-profile-connections"))).click()
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "settings-profile-connections"))).click()
+    # profile_connections = driver.find_element_by_id("settings-profile-connections")
+    # actions = ActionChains(driver)
+    # actions.move_to_element(profile_connections)
+    # actions.click(profile_connections)
+    # actions.perform()
 
-    # TODO Add all connections
+    for connection in connections:
+        try:
+            connection_name = connection
+            globals()[connection_name]()
+        
+        except KeyError:
+            print("Connection %s not defined." % (connection))
+
+
+def Garmin():
+    disconnection("garmin-disconnection-button")
+
+    print("Garmin connection page.")
+
+
+    # WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "garmin-connection-button")))
+
+    # garmin_connection_button = driver.find_element_by_id("garmin-connection-button")
+    # ActionChains(driver).move_to_element(garmin_connection_button).click(garmin_connection_button).perform()
+
+    # driver.switch_to.default_content()
+    # driver.switch_to.frame("gauth-widget-frame-gauth-component")
+
+    # username = driver.find_element_by_id("username")
+    # username.clear()
+    # username.send_keys(connections.Garmin.username)
+
+    # password = driver.find_element_by_id("password")
+    # password.clear()
+    # password.send_keys(connections.Garmin.password)
+    # password.send_keys(Keys.RETURN)
+
+    # driver.switch_to.default_content()
+
+    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "authorize-group")))
+    # auth_button = driver.find_element_by_id("auth-app-gdpr")
+    # ActionChains(driver).move_to_element(auth_button).perform()
+    # auth_button.click()
+
+
+
+def Strava():
+    disconnection("strava-disconnection-button")
+
+    print("Strava connection page.")
+
+
+def disconnection(button):
     try:
-        if driver.find_element_by_id("garmin-disconnection-button").is_displayed():
-            driver.find_element_by_id("garmin-disconnection-button").click()
-            garmin_connect(user, password)
+        if driver.find_element_by_id(button).is_displayed():
+            driver.find_element_by_id(button).click()
 
     except NoSuchElementException:
-        garmin_connect(user, password)
+        return False
+    
+    return True
 
 
 def close():
@@ -138,5 +167,7 @@ if __name__ == "__main__":
         main()
     else:
         print("Configuration Error! Missing Parameter.")
+
+
 
 
