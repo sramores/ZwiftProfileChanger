@@ -83,71 +83,98 @@ def change_profile(profile):
     metricWeight.clear()
     metricWeight.send_keys(profile['weight'])
 
-    driver.find_element_by_xpath("/html/body/my-zwift/profile-component/div/div/div[2]/settings-general-component/div[2]/form/div[7]/div/button").click()
+    driver.find_element_by_xpath("/html/body/my-zwift/profile-component/div/div/div[2]/settings-general-component/div[2]/form/div[8]/div/button").click()
 
 
 def connection(connections):
     print("Connection page.")
 
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    driver.execute_script("window.scrollTo(0, 0);")
     WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "settings-profile-connections"))).click()
-    # profile_connections = driver.find_element_by_id("settings-profile-connections")
-    # actions = ActionChains(driver)
-    # actions.move_to_element(profile_connections)
-    # actions.click(profile_connections)
-    # actions.perform()
 
     for connection in connections:
         try:
             connection_name = connection
-            globals()[connection_name]()
+            globals()[connection_name](connections[connection_name]['username'], connections[connection_name]['password'])
         
         except KeyError:
             print("Connection %s not defined." % (connection))
 
 
-def Garmin():
+def Garmin(userData, passData):
     disconnection("garmin-disconnection-button")
 
     print("Garmin connection page.")
 
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "garmin-partner-connection")))
 
-    # WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "garmin-connection-button")))
+    garmin_connection_button = driver.find_element_by_id("garmin-connection-button")
+    ActionChains(driver).move_to_element(garmin_connection_button).click(garmin_connection_button).perform()
 
-    # garmin_connection_button = driver.find_element_by_id("garmin-connection-button")
-    # ActionChains(driver).move_to_element(garmin_connection_button).click(garmin_connection_button).perform()
+    driver.switch_to.default_content()
+    driver.switch_to.frame("gauth-widget-frame-gauth-component")
 
-    # driver.switch_to.default_content()
-    # driver.switch_to.frame("gauth-widget-frame-gauth-component")
+    username = driver.find_element_by_id("username")
+    username.clear()
+    username.send_keys(userData)
 
-    # username = driver.find_element_by_id("username")
-    # username.clear()
-    # username.send_keys(connections.Garmin.username)
+    password = driver.find_element_by_id("password")
+    password.clear()
+    password.send_keys(passData)
+    password.send_keys(Keys.RETURN)
 
-    # password = driver.find_element_by_id("password")
-    # password.clear()
-    # password.send_keys(connections.Garmin.password)
-    # password.send_keys(Keys.RETURN)
+    driver.switch_to.default_content()
 
-    # driver.switch_to.default_content()
-
-    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "authorize-group")))
-    # auth_button = driver.find_element_by_id("auth-app-gdpr")
-    # ActionChains(driver).move_to_element(auth_button).perform()
-    # auth_button.click()
-
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "authorize-group")))
+    auth_button = driver.find_element_by_id("auth-app-gdpr")
+    ActionChains(driver).move_to_element(auth_button).perform()
+    auth_button.click()
 
 
-def Strava():
+
+def Strava(userData, passData):
     disconnection("strava-disconnection-button")
 
     print("Strava connection page.")
 
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "strava-partner-connection")))
+
+    strava_connection_button = driver.find_element_by_id("strava-connection-button")
+    ActionChains(driver).move_to_element(strava_connection_button).click(strava_connection_button).perform()
+
+    #driver.switch_to.default_content()
+    #driver.switch_to.frame("gauth-widget-frame-gauth-component")
+
+    username = driver.find_element_by_id("email")
+    username.clear()
+    username.send_keys(userData)
+
+    password = driver.find_element_by_id("password")
+    password.clear()
+    password.send_keys(passData)
+    password.send_keys(Keys.RETURN)
+
+    driver.switch_to.default_content()
+
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "authorize")))
+    auth_button = driver.find_element_by_id("authorize")
+    ActionChains(driver).move_to_element(auth_button).perform()
+    auth_button.click()
+
+def TrainingPeaks(userData, passData):
+    disconnection("trainingpeaks-disconnection-button")
+
+    print("TrainingPeaks connection page.")
+
 
 def disconnection(button):
+
     try:
-        if driver.find_element_by_id(button).is_displayed():
-            driver.find_element_by_id(button).click()
+        button = driver.find_element_by_id(button)
+        if button.is_displayed():
+            actions = ActionChains(driver)
+            actions.move_to_element(button).perform()
+            button.click()
 
     except NoSuchElementException:
         return False
